@@ -13,22 +13,22 @@ export default function NewsletterPage() {
     const [defaultTemplate, setDefaultTemplate] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
-    // Cargar la plantilla predeterminada al inicializar
+    // Load the default template on initialization
     useEffect(() => {
         async function loadDefaultTemplate() {
             try {
                 const response = await fetch('/templates/default-template.json');
                 if (!response.ok) {
-                    throw new Error(`Error cargando plantilla: ${response.status}`);
+                    throw new Error(`Error loading template: ${response.status}`);
                 }
                 const templateData = await response.json();
                 setDefaultTemplate(templateData);
-                console.log("Plantilla cargada correctamente");
+                console.log("Template loaded successfully");
             } catch (error) {
-                console.error("Error al cargar la plantilla:", error);
+                console.error("Error loading template:", error);
                 toast({
-                    title: "Error al cargar plantilla",
-                    description: "No se pudo cargar la plantilla predeterminada.",
+                    title: "Error loading template",
+                    description: "Could not load the default template.",
                     variant: "destructive"
                 });
             } finally {
@@ -41,24 +41,24 @@ export default function NewsletterPage() {
 
     const handleSave = (html: string, design: any) => {
         setLastSavedDesign(design);
-        // Aquí podrías guardar el diseño en una base de datos
-        console.log("Diseño guardado:", design);
+        // Here you could save the design to a database
+        console.log("Design saved:", design);
         toast({
-            title: "Newsletter guardado",
-            description: "Tu newsletter ha sido guardado exitosamente.",
+            title: "Newsletter saved",
+            description: "Your newsletter has been saved successfully.",
         });
     };
 
     const handleSend = (html: string, design: any) => {
-        // Aquí podrías implementar la lógica para enviar el newsletter
-        console.log("Enviando newsletter:", html);
+        // Here you could implement the logic to send the newsletter
+        console.log("Sending newsletter:", html);
         toast({
-            title: "Newsletter enviado",
-            description: "Tu newsletter ha sido enviado exitosamente a todos los suscriptores.",
+            title: "Newsletter sent",
+            description: "Your newsletter has been sent successfully to all subscribers.",
         });
     };
 
-    // Determinar qué diseño usar: el último guardado o la plantilla predeterminada
+    // Determine which design to use: the last saved one or the default template
     const initialDesign = lastSavedDesign || defaultTemplate;
 
     return (
@@ -69,7 +69,7 @@ export default function NewsletterPage() {
                         {loading ? (
                             <div className="flex flex-col items-center justify-center h-[70vh]">
                                 <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
-                                <p className="text-lg text-muted-foreground">Cargando plantilla...</p>
+                                <p className="text-lg text-muted-foreground">Loading template...</p>
                             </div>
                         ) : (
                             <UnlayerEmailEditor

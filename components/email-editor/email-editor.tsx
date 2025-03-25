@@ -8,7 +8,6 @@ import { Save, Download, Upload, Mail, Users } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { SendEmailDialog } from "./send-email-dialog";
 import Link from "next/link";
-import juice from 'juice';
 
 interface UnlayerEmailEditorProps {
     onSave?: (html: string, design: any) => void;
@@ -21,7 +20,7 @@ export function UnlayerEmailEditor({ onSave, onSend, initialDesign }: UnlayerEma
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [html, setHtml] = useState<string>("");
     const [design, setDesign] = useState<any>(null);
-    const [title, setTitle] = useState<string>("Newsletter");
+    const [title, setTitle] = useState<string>("Newsletter at Texas A&M University");
 
     useEffect(() => {
         // Load initial design if it exists
@@ -152,55 +151,15 @@ export function UnlayerEmailEditor({ onSave, onSend, initialDesign }: UnlayerEma
 
     const sendEmail = async (htmlContent: string, recipients: string[]) => {
         try {
-            // 1. Reemplazar las referencias a Montserrat con fuentes fallback adecuadas
-            const htmlWithFallbacks = htmlContent.replace(
-                /font-family:\s*['"]Montserrat['"],\s*sans-serif/gi,
-                "font-family: 'Montserrat', Arial, 'Helvetica Neue', Helvetica, sans-serif"
-            );
-
-            // Reemplazo para otras fuentes populares que podrían estar siendo usadas
-            const htmlWithAllFallbacks = htmlWithFallbacks
-                .replace(
-                    /font-family:\s*['"]Open Sans['"],\s*sans-serif/gi,
-                    "font-family: 'Open Sans', Arial, 'Helvetica Neue', Helvetica, sans-serif"
-                )
-                .replace(
-                    /font-family:\s*['"]Lato['"],\s*sans-serif/gi,
-                    "font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif"
-                )
-                .replace(
-                    /font-family:\s*['"]Raleway['"],\s*sans-serif/gi,
-                    "font-family: 'Raleway', 'Helvetica Neue', Arial, Helvetica, sans-serif"
-                );
-
-            // 2. Convertir CSS a inline (mejora significativamente la compatibilidad)
-            const processedHtml = juice(htmlWithAllFallbacks, {
-                removeStyleTags: false,
-                preserveImportant: true,
-                preserveMediaQueries: true,
-                preserveFontFaces: true
-            });
-
-            // 3. Añadir aviso de fuentes web para Gmail que soporta <link> en el head
-            const finalHtml = processedHtml.replace(
-                '</head>',
-                `<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
-                <style>
-                    /* Fallback para clientes que ignoran CSS externo pero procesan style tags */
-                    @import url('https://fonts.googleapis.com/css?family=Montserrat:400,700');
-                </style>
-                </head>`
-            );
-
-            // 4. Enviar el HTML procesado
+            // Send the email through our API
             const response = await fetch('/api/send-email', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    html: finalHtml,
-                    subject: title || 'Newsletter',
+                    html: htmlContent,
+                    subject: title || 'Newsletter at Texas A&M University',
                     recipients: recipients,
                 }),
             });

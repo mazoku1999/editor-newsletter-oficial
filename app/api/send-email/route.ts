@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import mysql from 'mysql2/promise';
 
-// Configuración para indicar que esta ruta es dinámica
+// Configuration to indicate that this route is dynamic
 export const dynamic = 'force-dynamic';
 
-// Configuración de la conexión a la base de datos
+// Database connection configuration
 const dbConfig = {
     host: '132.148.179.230',
     user: 'msp',
@@ -19,39 +19,39 @@ export async function POST(request: Request) {
     try {
         const { html, subject, recipients } = await request.json();
 
-        // Validar que tengamos todos los datos necesarios
+        // Validate that we have all the necessary data
         if (!html || !subject || !recipients || !recipients.length) {
             return NextResponse.json(
-                { error: 'Faltan datos requeridos (html, subject, recipients)' },
+                { error: 'Missing required data (html, subject, recipients)' },
                 { status: 400 }
             );
         }
 
-        // Configurar el transporter de nodemailer
+        // Configure the nodemailer transporter
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: 'rogelio.carata10@gmail.com',
-                pass: 'aamf ixhe hbnh dyis'
+                user: 'motionsoundproduction2024@gmail.com',
+                pass: 'dmim evvz ftbu mmkq'
             }
         });
 
-        // Opciones del email
+        // Email options
         const mailOptions = {
-            from: 'Newsletter <rogelio.carata10@gmail.com>',
+            from: 'Newsletter <motionsoundproduction2024@gmail.com>',
             to: recipients.join(', '),
             subject: subject,
             html: html
         };
 
-        // Enviar el email
+        // Send the email
         const info = await transporter.sendMail(mailOptions);
 
-        // Conectar a la base de datos para registrar el envío
+        // Connect to the database to record the sending
         connection = await mysql.createConnection(dbConfig);
 
-        // Registrar el envío de newsletter en la base de datos (aquí podrías crear una tabla para historial)
-        // Este es un ejemplo, idealmente tendrías una tabla de envíos de newsletter
+        // Record the newsletter sending in the database (you could create a table for history)
+        // This is an example, ideally you would have a newsletter sending table
         const newsletterLog = {
             date_sent: new Date(),
             subject: subject,
@@ -59,22 +59,22 @@ export async function POST(request: Request) {
             message_id: info.messageId
         };
 
-        console.log('Email enviado con éxito:', newsletterLog);
+        console.log('Email sent successfully:', newsletterLog);
 
         return NextResponse.json({
             success: true,
             messageId: info.messageId,
-            message: `Email enviado con éxito a ${recipients.length} suscriptor(es)`
+            message: `Email successfully sent to ${recipients.length} subscriber(s)`
         });
 
     } catch (error) {
-        console.error('Error al enviar el email:', error);
+        console.error('Error sending email:', error);
         return NextResponse.json(
-            { error: 'Error al enviar el email', details: error instanceof Error ? error.message : String(error) },
+            { error: 'Error sending email', details: error instanceof Error ? error.message : String(error) },
             { status: 500 }
         );
     } finally {
-        // Cerrar la conexión si está abierta
+        // Close the connection if it's open
         if (connection) {
             await connection.end();
         }

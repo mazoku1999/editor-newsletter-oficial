@@ -27,10 +27,10 @@ import { toast } from "@/components/ui/use-toast";
 // Define the interface for a subscriber
 interface Subscriber {
     Id: number;
-    Nombre: string;
+    Name: string;
     Email: string;
     Status: string;
-    Fecha_Alta: string;
+    JoinDate: string;
 }
 
 interface SendEmailDialogProps {
@@ -79,7 +79,15 @@ export function SendEmailDialog({ htmlContent, subject, onSend }: SendEmailDialo
             }
 
             if (data.success && Array.isArray(data.subscribers)) {
-                setSubscribers(data.subscribers);
+                // Map the Spanish field names to English field names
+                const mappedSubscribers = data.subscribers.map((sub: any) => ({
+                    Id: sub.Id,
+                    Name: sub.Nombre,
+                    Email: sub.Email,
+                    Status: sub.Status,
+                    JoinDate: sub.Fecha_Alta
+                }));
+                setSubscribers(mappedSubscribers);
             } else {
                 throw new Error('Invalid response format');
             }
@@ -98,7 +106,7 @@ export function SendEmailDialog({ htmlContent, subject, onSend }: SendEmailDialo
 
     const filteredSubscribers = subscribers.filter(
         subscriber =>
-            subscriber.Nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            subscriber.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             subscriber.Email.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -211,10 +219,10 @@ export function SendEmailDialog({ htmlContent, subject, onSend }: SendEmailDialo
                     <Checkbox
                         checked={selectedSubscribers.includes(subscriber.Id)}
                         onCheckedChange={() => handleSelectSubscriber(subscriber.Id)}
-                        aria-label={`Select ${subscriber.Nombre}`}
+                        aria-label={`Select ${subscriber.Name}`}
                     />
                 </TableCell>
-                <TableCell>{subscriber.Nombre}</TableCell>
+                <TableCell>{subscriber.Name}</TableCell>
                 <TableCell>{subscriber.Email}</TableCell>
             </TableRow>
         ));

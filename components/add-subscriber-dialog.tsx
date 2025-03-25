@@ -35,11 +35,11 @@ export function AddSubscriberDialog({ onSuccess }: AddSubscriberDialogProps) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validaciones básicas
+        // Basic validations
         if (!nombre.trim()) {
             toast({
-                title: "Nombre requerido",
-                description: "Por favor, ingresa el nombre del suscriptor",
+                title: "Name required",
+                description: "Please enter the subscriber's name",
                 variant: "destructive"
             });
             nombreInputRef.current?.focus();
@@ -48,8 +48,8 @@ export function AddSubscriberDialog({ onSuccess }: AddSubscriberDialogProps) {
 
         if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             toast({
-                title: "Email inválido",
-                description: "Por favor, ingresa un email válido",
+                title: "Invalid email",
+                description: "Please enter a valid email",
                 variant: "destructive"
             });
             return;
@@ -72,18 +72,18 @@ export function AddSubscriberDialog({ onSuccess }: AddSubscriberDialogProps) {
             const result = await response.json();
 
             if (!response.ok) {
-                throw new Error(result.error || 'Error al añadir el suscriptor');
+                throw new Error(result.error || 'Error adding the subscriber');
             }
 
             toast({
-                title: "Suscriptor añadido",
-                description: "El suscriptor ha sido añadido correctamente"
+                title: "Subscriber added",
+                description: "The subscriber has been added successfully"
             });
 
             resetForm();
             setOpen(false);
 
-            // Llamar al callback si existe
+            // Call the callback if it exists
             if (onSuccess) {
                 onSuccess();
             }
@@ -93,7 +93,7 @@ export function AddSubscriberDialog({ onSuccess }: AddSubscriberDialogProps) {
                 title: "Error",
                 description: error instanceof Error
                     ? error.message
-                    : "Ocurrió un error al añadir el suscriptor",
+                    : "An error occurred while adding the subscriber",
                 variant: "destructive"
             });
         } finally {
@@ -109,26 +109,26 @@ export function AddSubscriberDialog({ onSuccess }: AddSubscriberDialogProps) {
             <DialogTrigger asChild>
                 <Button variant="default" size="sm">
                     <UserPlus className="h-4 w-4 mr-2" />
-                    Añadir
+                    Add
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Añadir Nuevo Suscriptor</DialogTitle>
+                    <DialogTitle>Add New Subscriber</DialogTitle>
                     <DialogDescription>
-                        Ingresa los datos del nuevo suscriptor para añadirlo a tu lista.
+                        Enter the new subscriber's details to add them to your list.
                     </DialogDescription>
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="space-y-4 py-2">
                     <div className="space-y-2">
-                        <Label htmlFor="nombre">Nombre</Label>
+                        <Label htmlFor="nombre">Name</Label>
                         <Input
                             id="nombre"
                             ref={nombreInputRef}
                             value={nombre}
                             onChange={(e) => setNombre(e.target.value)}
-                            placeholder="Juan Pérez"
+                            placeholder="John Doe"
                             disabled={loading}
                         />
                     </div>
@@ -139,7 +139,7 @@ export function AddSubscriberDialog({ onSuccess }: AddSubscriberDialogProps) {
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="ejemplo@correo.com"
+                            placeholder="example@email.com"
                             disabled={loading}
                         />
                     </div>
@@ -151,16 +151,16 @@ export function AddSubscriberDialog({ onSuccess }: AddSubscriberDialogProps) {
                             onClick={() => setOpen(false)}
                             disabled={loading}
                         >
-                            Cancelar
+                            Cancel
                         </Button>
                         <Button type="submit" disabled={loading}>
                             {loading ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Guardando...
+                                    Saving...
                                 </>
                             ) : (
-                                "Guardar Suscriptor"
+                                "Save Subscriber"
                             )}
                         </Button>
                     </DialogFooter>

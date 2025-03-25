@@ -13,21 +13,21 @@ export default function SubscribersPage() {
     return (
         <DashboardLayout>
             <div className="space-y-6">
-                {/* Encabezado */}
+                {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <div className="flex items-center gap-2">
                             <Users className="h-8 w-8 text-primary" />
-                            <h1 className="text-3xl font-bold tracking-tight">Suscriptores</h1>
+                            <h1 className="text-3xl font-bold tracking-tight">Subscribers</h1>
                         </div>
                         <p className="text-muted-foreground mt-1">
-                            Gestiona tu base de suscriptores y analiza su comportamiento
+                            Manage your subscriber base and analyze their behavior
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
                         <Button variant="outline" size="sm" className="hidden md:flex">
                             <Download className="mr-2 h-4 w-4" />
-                            Exportar CSV
+                            Export CSV
                         </Button>
                         <AddSubscriberDialog />
                     </div>
@@ -35,7 +35,7 @@ export default function SubscribersPage() {
 
                 <Separator className="my-6" />
 
-                {/* Lista de suscriptores */}
+                {/* Subscriber list */}
                 <Card className="border-none shadow-none">
                     <CardContent className="p-0">
                         <SubscriberList />

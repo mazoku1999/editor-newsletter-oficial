@@ -28,7 +28,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Search, Mail, Users, Activity, Calendar, RefreshCw, Loader2, MoreHorizontal, BarChart3, ArrowUpRight } from "lucide-react";
 import { format, subDays } from "date-fns";
-import { es } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 import { toast } from "@/components/ui/use-toast";
 import { AddSubscriberDialog } from "@/components/add-subscriber-dialog";
 import {
@@ -40,7 +40,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-// Definimos la interfaz para un suscriptor
+// Define the interface for a subscriber
 interface Subscriber {
     Id: number;
     Nombre: string;
@@ -55,10 +55,10 @@ export function SubscriberList() {
     const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
-    const [estimatedOpenRate, setEstimatedOpenRate] = useState(65); // Valor inicial constante
+    const [estimatedOpenRate, setEstimatedOpenRate] = useState(65); // Initial constant value
 
     useEffect(() => {
-        // Generar el valor aleatorio solo en el cliente
+        // Generate random value only on the client
         setEstimatedOpenRate(65 + Math.floor(Math.random() * 20));
         fetchSubscribers();
     }, []);
@@ -72,20 +72,20 @@ export function SubscriberList() {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || 'Error al obtener los suscriptores');
+                throw new Error(data.error || 'Error getting subscribers');
             }
 
             if (data.success && Array.isArray(data.subscribers)) {
                 setSubscribers(data.subscribers);
             } else {
-                throw new Error('Formato de respuesta inválido');
+                throw new Error('Invalid response format');
             }
         } catch (error) {
             console.error('Error fetching subscribers:', error);
-            setError(error instanceof Error ? error.message : 'Error desconocido');
+            setError(error instanceof Error ? error.message : 'Unknown error');
             toast({
-                title: "Error al cargar suscriptores",
-                description: error instanceof Error ? error.message : 'Error desconocido',
+                title: "Error loading subscribers",
+                description: error instanceof Error ? error.message : 'Unknown error',
                 variant: "destructive"
             });
         } finally {
@@ -100,13 +100,13 @@ export function SubscriberList() {
         return matchesSearch && matchesStatus;
     });
 
-    // Estadísticas
+    // Statistics
     const totalSubscribers = subscribers.length;
     const activeSubscribers = subscribers.filter(s => s.Status.toLowerCase() === "active").length;
     const inactiveSubscribers = subscribers.filter(s => s.Status.toLowerCase() === "inactive").length;
     const unsubscribedCount = subscribers.filter(s => s.Status.toLowerCase() === "unsubscribed").length;
 
-    // Calcular cuántos suscriptores nuevos (simulados - últimos 30 días)
+    // Calculate how many new subscribers (simulated - last 30 days)
     const thirtyDaysAgo = subDays(new Date(), 30);
     const newSubscribersCount = subscribers.filter(s => {
         try {
@@ -116,20 +116,20 @@ export function SubscriberList() {
         }
     }).length;
 
-    // Tasa de retención simulada
+    // Simulated retention rate
     const retentionRate = totalSubscribers > 0 ? (activeSubscribers / totalSubscribers) * 100 : 0;
 
-    // Formatear la fecha para mostrarla legible
+    // Format date for readable display
     const formatDate = (dateString: string) => {
         try {
             const date = new Date(dateString);
-            return format(date, 'dd/MM/yyyy HH:mm', { locale: es });
+            return format(date, 'MM/dd/yyyy HH:mm', { locale: enUS });
         } catch (error) {
             return dateString;
         }
     };
 
-    // Obtener el color de la insignia según el estado
+    // Get badge color based on status
     const getStatusBadgeVariant = (status: string) => {
         switch (status.toLowerCase()) {
             case 'active':
@@ -145,11 +145,11 @@ export function SubscriberList() {
 
     return (
         <div className="space-y-6">
-            {/* Estadísticas */}
+            {/* Statistics */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 <Card className="bg-white">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Total Suscriptores</CardTitle>
+                        <CardTitle className="text-sm font-medium">Total Subscribers</CardTitle>
                         <Users className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
@@ -157,57 +157,57 @@ export function SubscriberList() {
                         <div className="flex items-center text-xs text-muted-foreground">
                             <ArrowUpRight className="mr-1 h-3 w-3 text-emerald-500" />
                             <span className="text-emerald-500 font-medium">+{newSubscribersCount}</span>
-                            <span className="ml-1">en los últimos 30 días</span>
+                            <span className="ml-1">in the last 30 days</span>
                         </div>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Suscriptores Activos</CardTitle>
+                        <CardTitle className="text-sm font-medium">Active Subscribers</CardTitle>
                         <Activity className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{activeSubscribers}</div>
                         <div className="text-xs text-muted-foreground">
-                            {retentionRate.toFixed(1)}% tasa de retención
+                            {retentionRate.toFixed(1)}% retention rate
                         </div>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Tasa de Apertura</CardTitle>
+                        <CardTitle className="text-sm font-medium">Open Rate</CardTitle>
                         <Mail className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{estimatedOpenRate}%</div>
                         <div className="text-xs text-muted-foreground">
-                            Promedio estimado
+                            Estimated average
                         </div>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Bajas</CardTitle>
+                        <CardTitle className="text-sm font-medium">Unsubscribed</CardTitle>
                         <BarChart3 className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{unsubscribedCount}</div>
                         <div className="text-xs text-muted-foreground">
-                            {totalSubscribers > 0 ? (unsubscribedCount / totalSubscribers * 100).toFixed(1) : 0}% tasa de cancelación
+                            {totalSubscribers > 0 ? (unsubscribedCount / totalSubscribers * 100).toFixed(1) : 0}% churn rate
                         </div>
                     </CardContent>
                 </Card>
             </div>
 
-            {/* Tabla de suscriptores */}
+            {/* Subscribers table */}
             <Card className="border shadow-sm">
                 <CardHeader className="pb-3">
-                    <CardTitle>Lista de Suscriptores</CardTitle>
+                    <CardTitle>Subscribers List</CardTitle>
                     <CardDescription>
-                        {filteredSubscribers.length} suscriptores encontrados
+                        {filteredSubscribers.length} subscribers found
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="p-0">
@@ -215,7 +215,7 @@ export function SubscriberList() {
                         <div className="relative w-full sm:w-auto">
                             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                             <Input
-                                placeholder="Buscar suscriptores..."
+                                placeholder="Search subscribers..."
                                 className="pl-8 w-full sm:w-[300px]"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -228,13 +228,13 @@ export function SubscriberList() {
                                 onValueChange={setStatusFilter}
                             >
                                 <SelectTrigger className="w-[160px]">
-                                    <SelectValue placeholder="Filtrar por estado" />
+                                    <SelectValue placeholder="Filter by status" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="all">Todos</SelectItem>
-                                    <SelectItem value="active">Activos</SelectItem>
-                                    <SelectItem value="inactive">Inactivos</SelectItem>
-                                    <SelectItem value="unsubscribed">Dados de baja</SelectItem>
+                                    <SelectItem value="all">All</SelectItem>
+                                    <SelectItem value="active">Active</SelectItem>
+                                    <SelectItem value="inactive">Inactive</SelectItem>
+                                    <SelectItem value="unsubscribed">Unsubscribed</SelectItem>
                                 </SelectContent>
                             </Select>
                             <Button
@@ -249,7 +249,7 @@ export function SubscriberList() {
                                 ) : (
                                     <RefreshCw className="h-4 w-4" />
                                 )}
-                                <span className="ml-2 hidden sm:inline">Refrescar</span>
+                                <span className="ml-2 hidden sm:inline">Refresh</span>
                             </Button>
                         </div>
                     </div>
@@ -258,11 +258,11 @@ export function SubscriberList() {
                         <Table>
                             <TableHeader>
                                 <TableRow className="bg-muted/50">
-                                    <TableHead>Nombre</TableHead>
+                                    <TableHead>Name</TableHead>
                                     <TableHead>Email</TableHead>
-                                    <TableHead>Estado</TableHead>
-                                    <TableHead>Fecha de Alta</TableHead>
-                                    <TableHead className="text-right">Acciones</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead>Join Date</TableHead>
+                                    <TableHead className="text-right">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -271,7 +271,7 @@ export function SubscriberList() {
                                         <TableCell colSpan={5} className="h-40">
                                             <div className="flex flex-col items-center justify-center h-full">
                                                 <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
-                                                <p className="text-sm text-muted-foreground">Cargando suscriptores...</p>
+                                                <p className="text-sm text-muted-foreground">Loading subscribers...</p>
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -279,14 +279,14 @@ export function SubscriberList() {
                                     <TableRow>
                                         <TableCell colSpan={5} className="h-40 text-center">
                                             <div className="flex flex-col items-center justify-center h-full">
-                                                <div className="text-destructive font-medium mb-1">Error al cargar suscriptores</div>
+                                                <div className="text-destructive font-medium mb-1">Error loading subscribers</div>
                                                 <p className="text-sm text-muted-foreground mb-3">{error}</p>
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
                                                     onClick={fetchSubscribers}
                                                 >
-                                                    Reintentar
+                                                    Retry
                                                 </Button>
                                             </div>
                                         </TableCell>
@@ -298,9 +298,9 @@ export function SubscriberList() {
                                             <TableCell className="text-muted-foreground">{subscriber.Email}</TableCell>
                                             <TableCell>
                                                 <Badge variant={getStatusBadgeVariant(subscriber.Status) as any}>
-                                                    {subscriber.Status === 'Active' ? 'Activo' :
-                                                        subscriber.Status === 'Inactive' ? 'Inactivo' :
-                                                            subscriber.Status === 'Unsubscribed' ? 'Dado de baja' :
+                                                    {subscriber.Status === 'Active' ? 'Active' :
+                                                        subscriber.Status === 'Inactive' ? 'Inactive' :
+                                                            subscriber.Status === 'Unsubscribed' ? 'Unsubscribed' :
                                                                 subscriber.Status}
                                                 </Badge>
                                             </TableCell>
@@ -315,12 +315,12 @@ export function SubscriberList() {
                                                         </Button>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
-                                                        <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                                                        <DropdownMenuItem>Editar suscriptor</DropdownMenuItem>
-                                                        <DropdownMenuItem>Ver detalles</DropdownMenuItem>
+                                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                        <DropdownMenuItem>Edit subscriber</DropdownMenuItem>
+                                                        <DropdownMenuItem>View details</DropdownMenuItem>
                                                         <DropdownMenuSeparator />
                                                         <DropdownMenuItem className="text-destructive">
-                                                            Eliminar
+                                                            Delete
                                                         </DropdownMenuItem>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
@@ -333,8 +333,8 @@ export function SubscriberList() {
                                             <div className="flex flex-col items-center justify-center h-full">
                                                 <p className="text-muted-foreground mb-1">
                                                     {searchTerm || statusFilter !== "all"
-                                                        ? "No se encontraron suscriptores que coincidan con los filtros"
-                                                        : "No hay suscriptores disponibles"}
+                                                        ? "No subscribers found matching your filters"
+                                                        : "No subscribers available"}
                                                 </p>
                                                 {(searchTerm || statusFilter !== "all") && (
                                                     <Button
@@ -346,7 +346,7 @@ export function SubscriberList() {
                                                             setStatusFilter("all");
                                                         }}
                                                     >
-                                                        Limpiar filtros
+                                                        Clear filters
                                                     </Button>
                                                 )}
                                             </div>

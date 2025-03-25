@@ -36,7 +36,7 @@ export function SendEditorContent({ content }: SendEditorContentProps) {
     const [showPreview, setShowPreview] = useState(false);
 
     // Extraer título e imagen del contenido
-    const title = extractFirstTitle(content) || "Newsletter";
+    const title = extractFirstTitle(content) || "Newsletter at Texas A&M University";
     const imageUrl = extractFirstImage(content) || "";
 
     const emailHtml = render(
