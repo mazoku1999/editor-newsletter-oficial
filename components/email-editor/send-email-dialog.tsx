@@ -21,8 +21,9 @@ import {
 } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Search, Loader2 } from "lucide-react";
+import { Search, Loader2, Plus, Mail } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 // Define the interface for a subscriber
 interface Subscriber {
@@ -31,6 +32,12 @@ interface Subscriber {
     Email: string;
     Status: string;
     JoinDate: string;
+}
+
+// Interface for temporary non-subscribed recipients
+interface TempRecipient {
+    id: string;
+    email: string;
 }
 
 interface SendEmailDialogProps {
@@ -42,6 +49,7 @@ interface SendEmailDialogProps {
 export function SendEmailDialog({ htmlContent, subject, onSend }: SendEmailDialogProps) {
     const [open, setOpen] = useState(false);
     const [selectedSubscribers, setSelectedSubscribers] = useState<number[]>([]);
+    const [tempRecipients, setTempRecipients] = useState<TempRecipient[]>([]);
     const [isSending, setIsSending] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
@@ -52,6 +60,8 @@ export function SendEmailDialog({ htmlContent, subject, onSend }: SendEmailDialo
     useEffect(() => {
         if (open) {
             fetchSubscribers();
+            // Clear temp recipients when dialog opens
+            setTempRecipients([]);
         }
     }, [open]);
 
@@ -104,11 +114,43 @@ export function SendEmailDialog({ htmlContent, subject, onSend }: SendEmailDialo
         }
     };
 
+    // Helper function to validate email format
+    const isValidEmail = (email: string) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    // Check if the search term is a valid email that doesn't exist in subscribers
+    const isNewValidEmail = isValidEmail(searchTerm) &&
+        !subscribers.some(sub => sub.Email.toLowerCase() === searchTerm.toLowerCase()) &&
+        !tempRecipients.some(temp => temp.email.toLowerCase() === searchTerm.toLowerCase());
+
     const filteredSubscribers = subscribers.filter(
         subscriber =>
             subscriber.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             subscriber.Email.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    // Add a temporary recipient
+    const addTempRecipient = () => {
+        if (isValidEmail(searchTerm)) {
+            const newTempRecipient: TempRecipient = {
+                id: `temp-${Date.now()}`,
+                email: searchTerm
+            };
+            setTempRecipients([...tempRecipients, newTempRecipient]);
+            setSearchTerm(''); // Clear search term after adding
+            toast({
+                title: "Recipient added",
+                description: `${searchTerm} added to recipients list`
+            });
+        }
+    };
+
+    // Remove a temporary recipient
+    const removeTempRecipient = (id: string) => {
+        setTempRecipients(tempRecipients.filter(temp => temp.id !== id));
+    };
 
     const handleSelectAll = () => {
         if (selectedSubscribers.length === filteredSubscribers.length) {
@@ -127,7 +169,18 @@ export function SendEmailDialog({ htmlContent, subject, onSend }: SendEmailDialo
     };
 
     const handleSendEmail = async () => {
-        if (selectedSubscribers.length === 0) {
+        // Get recipients from both selected subscribers and temp recipients
+        const subscriberEmails = selectedSubscribers
+            .map(id => {
+                const subscriber = subscribers.find(s => s.Id === id);
+                return subscriber ? subscriber.Email : null;
+            })
+            .filter(Boolean) as string[];
+
+        const tempEmails = tempRecipients.map(temp => temp.email);
+        const allRecipients = [...subscriberEmails, ...tempEmails];
+
+        if (allRecipients.length === 0) {
             toast({
                 title: "No recipients selected",
                 description: "Please select at least one recipient to send the email",
@@ -139,22 +192,16 @@ export function SendEmailDialog({ htmlContent, subject, onSend }: SendEmailDialo
         setIsSending(true);
 
         try {
-            const recipients = selectedSubscribers
-                .map(id => {
-                    const subscriber = subscribers.find(s => s.Id === id);
-                    return subscriber ? subscriber.Email : null;
-                })
-                .filter(Boolean) as string[];
-
-            await onSend(recipients);
+            await onSend(allRecipients);
 
             toast({
                 title: "Email sent successfully",
-                description: `Newsletter sent to ${recipients.length} recipients`
+                description: `Newsletter sent to ${allRecipients.length} recipients`
             });
 
             setOpen(false);
             setSelectedSubscribers([]);
+            setTempRecipients([]);
         } catch (error) {
             toast({
                 title: "Failed to send email",
@@ -201,31 +248,64 @@ export function SendEmailDialog({ htmlContent, subject, onSend }: SendEmailDialo
             );
         }
 
-        if (filteredSubscribers.length === 0) {
-            return (
-                <TableRow>
-                    <TableCell colSpan={3} className="text-center py-8">
-                        {searchTerm
-                            ? "No subscribers found matching your search"
-                            : "No active subscribers available"}
-                    </TableCell>
-                </TableRow>
-            );
-        }
+        return (
+            <>
+                {/* Render temporary recipients first */}
+                {tempRecipients.map((recipient) => (
+                    <TableRow key={recipient.id} className="bg-muted/40">
+                        <TableCell>
+                            {/* Temp recipients are always selected */}
+                            <Checkbox
+                                checked={true}
+                                disabled
+                                aria-label={`Recipient ${recipient.email}`}
+                            />
+                        </TableCell>
+                        <TableCell className="text-muted-foreground italic">
+                            <div className="flex items-center gap-2">
+                                <Mail className="h-4 w-4" />
+                                <span>Non-subscribed</span>
+                            </div>
+                        </TableCell>
+                        <TableCell className="flex justify-between items-center">
+                            {recipient.email}
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeTempRecipient(recipient.id)}
+                            >
+                                Remove
+                            </Button>
+                        </TableCell>
+                    </TableRow>
+                ))}
 
-        return filteredSubscribers.map((subscriber) => (
-            <TableRow key={subscriber.Id}>
-                <TableCell>
-                    <Checkbox
-                        checked={selectedSubscribers.includes(subscriber.Id)}
-                        onCheckedChange={() => handleSelectSubscriber(subscriber.Id)}
-                        aria-label={`Select ${subscriber.Name}`}
-                    />
-                </TableCell>
-                <TableCell>{subscriber.Name}</TableCell>
-                <TableCell>{subscriber.Email}</TableCell>
-            </TableRow>
-        ));
+                {/* Then show regular subscribers */}
+                {filteredSubscribers.length === 0 && tempRecipients.length === 0 ? (
+                    <TableRow>
+                        <TableCell colSpan={3} className="text-center py-8">
+                            {searchTerm
+                                ? "No subscribers found matching your search"
+                                : "No active subscribers available"}
+                        </TableCell>
+                    </TableRow>
+                ) : (
+                    filteredSubscribers.map((subscriber) => (
+                        <TableRow key={subscriber.Id}>
+                            <TableCell>
+                                <Checkbox
+                                    checked={selectedSubscribers.includes(subscriber.Id)}
+                                    onCheckedChange={() => handleSelectSubscriber(subscriber.Id)}
+                                    aria-label={`Select ${subscriber.Name}`}
+                                />
+                            </TableCell>
+                            <TableCell>{subscriber.Name}</TableCell>
+                            <TableCell>{subscriber.Email}</TableCell>
+                        </TableRow>
+                    ))
+                )}
+            </>
+        );
     };
 
     return (
@@ -244,11 +324,28 @@ export function SendEmailDialog({ htmlContent, subject, onSend }: SendEmailDialo
                 <div className="relative mb-4">
                     <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
-                        placeholder="Search subscribers..."
+                        placeholder="Search subscribers or enter email address..."
                         className="pl-8"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
+                    {isNewValidEmail && (
+                        <div className="mt-2">
+                            <Alert className="py-2 border-primary">
+                                <AlertDescription className="flex items-center justify-between">
+                                    <span className="text-sm">Add <strong>{searchTerm}</strong> as a recipient?</span>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={addTempRecipient}
+                                        className="ml-2"
+                                    >
+                                        <Plus className="h-4 w-4 mr-1" /> Add
+                                    </Button>
+                                </AlertDescription>
+                            </Alert>
+                        </div>
+                    )}
                 </div>
 
                 <div className="border rounded-md">
@@ -262,7 +359,7 @@ export function SendEmailDialog({ htmlContent, subject, onSend }: SendEmailDialo
                                             selectedSubscribers.length === filteredSubscribers.length
                                         }
                                         onCheckedChange={handleSelectAll}
-                                        aria-label="Select all"
+                                        aria-label="Select all subscribers"
                                     />
                                 </TableHead>
                                 <TableHead>Name</TableHead>
@@ -285,7 +382,7 @@ export function SendEmailDialog({ htmlContent, subject, onSend }: SendEmailDialo
                     <Button
                         variant="default"
                         onClick={handleSendEmail}
-                        disabled={selectedSubscribers.length === 0 || isSending}
+                        disabled={(selectedSubscribers.length === 0 && tempRecipients.length === 0) || isSending}
                     >
                         {isSending ? (
                             <>
@@ -293,7 +390,7 @@ export function SendEmailDialog({ htmlContent, subject, onSend }: SendEmailDialo
                                 Sending...
                             </>
                         ) : (
-                            `Send to ${selectedSubscribers.length} recipient${selectedSubscribers.length !== 1 ? 's' : ''}`
+                            `Send to ${selectedSubscribers.length + tempRecipients.length} recipient${(selectedSubscribers.length + tempRecipients.length) !== 1 ? 's' : ''}`
                         )}
                     </Button>
                 </DialogFooter>
