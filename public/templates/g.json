@@ -1,0 +1,228 @@
+{
+    "counters": {
+        "u_column": 1,
+        "u_row": 1,
+        "u_content_text": 1,
+        "u_content_image": 1,
+        "u_content_button": 1,
+        "u_content_divider": 1
+    },
+    "body": {
+        "rows": [
+            {
+                "cells": [
+                    1
+                ],
+                "columns": [
+                    {
+                        "contents": [
+                            {
+                                "type": "text",
+                                "values": {
+                                    "containerPadding": "10px",
+                                    "textAlign": "center",
+                                    "color": "#000",
+                                    "text": "<p style=\"font-size: 28px; font-weight: bold;\">Newsletter de Bienvenida</p>",
+                                    "lineHeight": "140%",
+                                    "linkStyle": {
+                                        "inherit": true,
+                                        "linkColor": "#0000ee",
+                                        "linkHoverColor": "#0000ee",
+                                        "linkUnderline": true,
+                                        "linkHoverUnderline": true
+                                    },
+                                    "_meta": {
+                                        "htmlID": "u_content_text_1",
+                                        "htmlClassNames": "u_content_text"
+                                    },
+                                    "selectable": true,
+                                    "draggable": true,
+                                    "duplicatable": true,
+                                    "deletable": true,
+                                    "hideable": true
+                                }
+                            },
+                            {
+                                "type": "divider",
+                                "values": {
+                                    "containerPadding": "10px",
+                                    "color": "#BBBBBB",
+                                    "width": "100%",
+                                    "border": {
+                                        "borderTopWidth": "1px",
+                                        "borderTopStyle": "solid",
+                                        "borderTopColor": "#BBBBBB"
+                                    },
+                                    "_meta": {
+                                        "htmlID": "u_content_divider_1",
+                                        "htmlClassNames": "u_content_divider"
+                                    },
+                                    "selectable": true,
+                                    "draggable": true,
+                                    "duplicatable": true,
+                                    "deletable": true,
+                                    "hideable": true
+                                }
+                            },
+                            {
+                                "type": "image",
+                                "values": {
+                                    "containerPadding": "10px",
+                                    "src": {
+                                        "url": "https://assets.unlayer.com/stock-templates/1623939851468-thinking.jpg",
+                                        "width": 1920,
+                                        "height": 1080
+                                    },
+                                    "textAlign": "center",
+                                    "altText": "Imagen de bienvenida",
+                                    "action": {
+                                        "name": "web",
+                                        "values": {
+                                            "href": "",
+                                            "target": "_blank"
+                                        }
+                                    },
+                                    "hideDesktop": false,
+                                    "displayCondition": null,
+                                    "_meta": {
+                                        "htmlID": "u_content_image_1",
+                                        "htmlClassNames": "u_content_image"
+                                    },
+                                    "selectable": true,
+                                    "draggable": true,
+                                    "duplicatable": true,
+                                    "deletable": true,
+                                    "hideable": true,
+                                    "_override": {
+                                        "mobile": {
+                                            "textAlign": "center"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "type": "text",
+                                "values": {
+                                    "containerPadding": "10px",
+                                    "textAlign": "left",
+                                    "color": "#000",
+                                    "text": "<p style=\"line-height: 140%;\">Hola,</p>\n<p style=\"line-height: 140%;\">&nbsp;</p>\n<p style=\"line-height: 140%;\">Gracias por suscribirte a nuestro newsletter. Estamos muy contentos de tenerte como parte de nuestra comunidad.</p>\n<p style=\"line-height: 140%;\">&nbsp;</p>\n<p style=\"line-height: 140%;\">Te mantendremos informado sobre las últimas noticias, eventos y promociones.</p>",
+                                    "lineHeight": "140%",
+                                    "linkStyle": {
+                                        "inherit": true,
+                                        "linkColor": "#0000ee",
+                                        "linkHoverColor": "#0000ee",
+                                        "linkUnderline": true,
+                                        "linkHoverUnderline": true
+                                    },
+                                    "_meta": {
+                                        "htmlID": "u_content_text_2",
+                                        "htmlClassNames": "u_content_text"
+                                    },
+                                    "selectable": true,
+                                    "draggable": true,
+                                    "duplicatable": true,
+                                    "deletable": true,
+                                    "hideable": true,
+                                    "_override": {
+                                        "mobile": {
+                                            "textAlign": "center"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "type": "button",
+                                "values": {
+                                    "containerPadding": "15px",
+                                    "href": {
+                                        "name": "web",
+                                        "values": {
+                                            "href": "https://www.example.com",
+                                            "target": "_blank"
+                                        }
+                                    },
+                                    "buttonColors": {
+                                        "color": "#FFFFFF",
+                                        "backgroundColor": "#3AAEE0",
+                                        "hoverColor": "#FFFFFF",
+                                        "hoverBackgroundColor": "#3AAEE0"
+                                    },
+                                    "size": {
+                                        "width": "auto",
+                                        "height": "auto"
+                                    },
+                                    "textAlign": "center",
+                                    "padding": "10px 20px",
+                                    "border": {},
+                                    "borderRadius": "4px",
+                                    "text": "<span style=\"font-size: 14px; line-height: 16.8px;\">Visite nuestra página web</span>",
+                                    "_meta": {
+                                        "htmlID": "u_content_button_1",
+                                        "htmlClassNames": "u_content_button"
+                                    },
+                                    "selectable": true,
+                                    "draggable": true,
+                                    "duplicatable": true,
+                                    "deletable": true,
+                                    "hideable": true
+                                }
+                            }
+                        ],
+                        "values": {
+                            "_meta": {
+                                "htmlID": "u_column_1",
+                                "htmlClassNames": "u_column"
+                            }
+                        }
+                    }
+                ],
+                "values": {
+                    "backgroundColor": "",
+                    "padding": "0px",
+                    "border": {},
+                    "borderRadius": "0px",
+                    "_meta": {
+                        "htmlID": "u_row_1",
+                        "htmlClassNames": "u_row"
+                    },
+                    "selectable": true,
+                    "draggable": true,
+                    "duplicatable": true,
+                    "deletable": true,
+                    "hideable": true
+                }
+            }
+        ],
+        "values": {
+            "backgroundColor": "#e7e7e7",
+            "backgroundImage": {
+                "url": "",
+                "fullWidth": true,
+                "repeat": false,
+                "center": true,
+                "cover": false
+            },
+            "padding": "0px",
+            "contentWidth": "600px",
+            "contentAlign": "center",
+            "fontFamily": {
+                "label": "Arial",
+                "value": "arial,helvetica,sans-serif"
+            },
+            "preheaderText": "",
+            "linkStyle": {
+                "body": true,
+                "linkColor": "#0000ee",
+                "linkHoverColor": "#0000ee",
+                "linkUnderline": true,
+                "linkHoverUnderline": true
+            },
+            "_meta": {
+                "htmlID": "u_body",
+                "htmlClassNames": "u_body"
+            }
+        }
+    },
+    "schemaVersion": 11
+}
