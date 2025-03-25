@@ -20,7 +20,7 @@ export function UnlayerEmailEditor({ onSave, onSend, initialDesign }: UnlayerEma
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [html, setHtml] = useState<string>("");
     const [design, setDesign] = useState<any>(null);
-    const [title, setTitle] = useState<string>("Newsletter at Texas A&M University");
+    const [title, setTitle] = useState<string>("The Hagler Institute - A&M University - March");
 
     useEffect(() => {
         // Load initial design if it exists
@@ -159,7 +159,7 @@ export function UnlayerEmailEditor({ onSave, onSend, initialDesign }: UnlayerEma
                 },
                 body: JSON.stringify({
                     html: htmlContent,
-                    subject: title || 'Newsletter at Texas A&M University',
+                    subject: title || 'The Hagler Institute - A&M University - March',
                     recipients: recipients,
                 }),
             });
