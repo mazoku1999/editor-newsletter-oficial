@@ -36,10 +36,11 @@ export async function POST(request: Request) {
             }
         });
 
-        // Email options
+        // Email options - using bcc instead of to to protect recipient privacy
         const mailOptions = {
             from: 'Newsletter <motionsoundproduction2024@gmail.com>',
-            to: recipients.join(', '),
+            to: 'motionsoundproduction2024@gmail.com', // Send to self
+            bcc: recipients.join(', '), // All recipients in bcc for privacy
             subject: subject,
             html: html
         };
